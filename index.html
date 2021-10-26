@@ -2,7 +2,7 @@
 
 {% block head %}
 
-<div class="content" style="background-color: black; color: chartreuse;">
+<div class="content" style="background-color: black; color: chartreuse; text-align: center;">
 
     <h1>Hash Phreak</h1>
 
@@ -13,33 +13,40 @@
 
 {% block body %}
 
-<div class="content" style="background-color: black; color: chartreuse;">
+<div class="content" style="background-color: black; color: chartreuse; text-align: center;">
 
+    
+    <a href="">Export Data</a>
 
-    <table>
+    <table style="width:100%">
         <tr>
             <th>Entry</th>
-            <th>SHA-1</th>
-            <th>SHA-256</th>
-            <th>SHA-384</th>
-            <th>SHA-512</th>
+          <th>SHA1</th>
+          <th>SHA256</th>
+          <th>SHA384</th>
+          <th>SHA512</th>
+          <th>Blowfish</th>
 
-
-
+          
         </tr>
+        {% for query in queries %}
         <tr>
-            <td></td>
-            <td></td>
-            <td>
-
-                <a href="">delete</a>
+            <td>{{ query.content }}</td>
+            <td>{{ query.content }}</td>
+            <td>{{ query.content }}</td>
+         
             </td>
-
-
-
+            
         </tr>
+    {% endfor %}
+    <form style="border-color: #b6a9cb; background-color: black;" action="/" method="POST">
+    
+        <input type="text" name ="content" id="content">
+        <input type="submit" value="Query">
 
-    </table>
+    </form>
+        
+      </table>
 
 
 </div>
