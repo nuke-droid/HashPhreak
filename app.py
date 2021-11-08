@@ -8,7 +8,26 @@ from os import strerror, system
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///HashPhreak.db'
+app.config['SQLALCHEMY_BINDS'] = {'hashes' : 'sqlite:////home/tyco/Code/HashPhreak/hashes.db'}
 db = SQLAlchemy(app)
+
+
+class HashDB(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    SHA1 = db.Column(db.String(200), nullable=False)
+    SHA224 = db.Column(db.String(200), nullable=False)
+    SHA256 = db.Column(db.String(200), nullable=False)
+    SHA384 = db.Column(db.String(200), nullable=False)
+    SHA512 = db.Column(db.String(200), nullable=False)
+    __bind_key__ = 'hashes'
+
+    def LIST_INGEST():
+
+         
+
+
+
+
 
 
 class query_hist(db.Model):
@@ -128,10 +147,7 @@ class crackhash:
                 if sub[1] == str:
                     print(f"Cracked! Password: {sub[0]} Hash: {sub[1]}")
                     ticker += 1
-                    endtime = time.time()
-
-                    print("--- %s milliseconds ---" % (time.time() - starttime))
-
+                
                     exit()
             
             except e:
@@ -139,9 +155,7 @@ class crackhash:
 
         if ticker <= 0:
             print("No corresponding hash found in database.")
-            endtime = time.time()
-        #Total runtime/duration
-        print(endtime - starttime)
+     
 
 
 @app.route("/", methods=['POST', 'GET'])
