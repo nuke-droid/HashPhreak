@@ -8,7 +8,7 @@ from os import strerror, system
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///HashPhreak.db'
-app.config['SQLALCHEMY_BINDS'] = {'hashes' : 'sqlite:////home/tyco/Code/HashPhreak/hashes.db'}
+app.config['SQLALCHEMY_BINDS'] = {'hashes' : 'sqlite:///hashes.db'}
 db = SQLAlchemy(app)
 
 
@@ -21,20 +21,11 @@ class HashDB(db.Model):
     SHA512 = db.Column(db.String(200), nullable=False)
     __bind_key__ = 'hashes'
 
-    def LIST_INGEST():
-
-         
-
-
-
-
-
 
 class query_hist(db.Model):
     id= db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(200), nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
-
 
     def __repr__(self):
         return '<Query %r>' % self.id
@@ -65,23 +56,6 @@ class hash:
         return hashvalue
     
 
-    def hashdetect(self, str):
-
-        if (len(str)) == 40:
-            hashtype = 'SHA1'
-        elif (len(str)) == 56:
-            hashtype = 'SHA224'
-        elif (len(str)) == 64:
-            hashtype = 'SHA256'
-        elif (len(str)) == 96:
-            hashtype = 'SHA384'
-        elif (len(str)) == 128:
-            hashtype = 'SHA512'
-        else:
-            hashtype = 'Null'
-
-        return hashtype
-
 class crackhash:
 #Start time is recorded and stored for duration calulation
    def main(self):
@@ -93,26 +67,7 @@ class crackhash:
         #hash object is created as h
         h = hash()
 
-        #prompt for string user input
-        str = input("Enter string to crack: ")
-        hashType = h.hashdetect(str)
-
-        if hashType != 'Null':
-            print(f'{hashType} hash type detected!')
-        else:
-            print("Hash type not detected or supported. Program aborting.")
-            exit()
-        detectedHash = None
-        if hashType == 'SHA1':
-            detectedHash = 1
-        elif hashType == 'SHA224':
-            detectedHash = 2
-        elif hashType == 'SHA256':
-            detectedHash = 3
-        elif hashType == 'SHA384':
-            detectedHash = 4
-        elif hashType == 'SHA512':
-            detectedHash = 5
+       
 
         #import text file with list of commond passwords
         with open('pwd.txt') as f:
