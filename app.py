@@ -13,13 +13,40 @@ db = SQLAlchemy(app)
 
 
 class HashDB(db.Model):
+    _bind_key__ = 'hashes'
     id = db.Column(db.Integer, primary_key=True)
-    SHA1 = db.Column(db.String(200), nullable=False)
-    SHA224 = db.Column(db.String(200), nullable=False)
-    SHA256 = db.Column(db.String(200), nullable=False)
-    SHA384 = db.Column(db.String(200), nullable=False)
-    SHA512 = db.Column(db.String(200), nullable=False)
-    __bind_key__ = 'hashes'
+    S1 = db.Column(db.String(200), nullable=False)
+    S224 = db.Column(db.String(200), nullable=False)
+    S256 = db.Column(db.String(200), nullable=False)
+    S384 = db.Column(db.String(200), nullable=False)
+    S512 = db.Column(db.String(200), nullable=False)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+
+   
+    def HASH_DIGEST():
+        
+        with open('rockyou.txt') as f:
+            content = f.readlines()
+        
+        for i in content:
+
+            j = i.splitlines()
+
+            for k in j:
+
+                result1 = hashlib.sha1(str.encode())
+                result224 = hashlib.sha224(str.encode())
+                result256 = hashlib.sha256(str.encode())
+                result384 = hashlib.sha384(str.encode())
+                result512 = hashlib.sha512(str.encode())
+
+               
+
+                new_hash =  HashDB(S1 = result1, S224 = result224, S256 = result256, S384 = result384, S512 = result512)
+
+                db.session.add(new_hash)
+                db.session.commit()
+    
 
 
 class query_hist(db.Model):
@@ -27,92 +54,7 @@ class query_hist(db.Model):
     content = db.Column(db.String(200), nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
-    def __repr__(self):
-        return '<Query %r>' % self.id
-
-
-
-#custom hash class
-class hash:
-    
-    #function which takes in plaintext value as strin str
-    def hashgen(self, str, hashtype):
-        hashtype = int(hashtype)    
-        if hashtype == 1:
-            result = hashlib.sha1(str.encode())
-        elif hashtype == 2:
-            result = hashlib.sha224(str.encode())
-        elif hashtype == 3:
-            result = hashlib.sha256(str.encode())
-        elif hashtype == 4:
-            result = hashlib.sha384(str.encode())
-        elif hashtype == 5:
-            result = hashlib.sha512(str.encode())
-            
-            
-        if result != None:
-            hashvalue = result.hexdigest()
-
-        return hashvalue
-    
-
-class crackhash:
-#Start time is recorded and stored for duration calulation
-   def main(self):
-       
-
-        #List of exceptions is created
-        e = (IndexError)
-
-        #hash object is created as h
-        h = hash()
-
-       
-
-        #import text file with list of commond passwords
-        with open('pwd.txt') as f:
-            content = f.readlines()
-
-        #instantiates empty 2 dimensional list
-        painbow = [[], []]
-
-        #loops through text file to separate inputs
-        for i in content:
-            #splits each items by newline
-            j = i.splitlines()
-            
-            #loop stores split items into plaintext and hash into two-dimensional list respectively
-            for k in j:
-
-
-
-                l = h.hashgen(k, detectedHash)
-
-                painbow.append([k, l])
-        #counter serves to provide message in the case that there is no corresponding plaintext value found for the input hash
-        ticker = 0
-
-        for i in range(len(painbow)):
-            try:
-                sub = painbow[i]
-                #ystem('clear')
-
-                
-                #if value is found in hashses stored in memory, corresponding plaintext value is displayed and program exit
-                if sub[1] == str:
-                    print(f"Cracked! Password: {sub[0]} Hash: {sub[1]}")
-                    ticker += 1
-                
-                    exit()
-            
-            except e:
-                pass
-
-        if ticker <= 0:
-            print("No corresponding hash found in database.")
-     
-
-
+  
 @app.route("/", methods=['POST', 'GET'])
 def index():
 
@@ -127,7 +69,7 @@ def index():
             return 'There was an issue with your query'
 
     else:
-        queries = query_hist.query.order_by(query_hist.date_created).all()
+        queries = HashDB.query.order_by(HashDB.date_created).all()
         return render_template('index.html', queries=queries)
 
 
