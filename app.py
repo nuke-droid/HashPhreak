@@ -12,6 +12,12 @@ app.config['SQLALCHEMY_BINDS'] = {'hashes' : 'sqlite:///hashes.db'}
 db = SQLAlchemy(app)
 
 
+class query_hist(db.Model):
+    id= db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(200), nullable=False)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+
+
 class HashDB(db.Model):
     _bind_key__ = 'hashes'
     id = db.Column(db.Integer, primary_key=True)
@@ -46,14 +52,7 @@ class HashDB(db.Model):
 
                 db.session.add(new_hash)
                 db.session.commit()
-    
-
-
-class query_hist(db.Model):
-    id= db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String(200), nullable=False)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
-
+ 
   
 @app.route("/", methods=['POST', 'GET'])
 def index():
