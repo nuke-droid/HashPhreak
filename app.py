@@ -19,19 +19,19 @@ class query_hist(db.Model):
 
 
 class HashDB(db.Model):
-    _bind_key__ = 'hashes'
+    __bind_key__ = 'hashes'
     id = db.Column(db.Integer, primary_key=True)
     S1 = db.Column(db.String(200), nullable=False)
     S224 = db.Column(db.String(200), nullable=False)
     S256 = db.Column(db.String(200), nullable=False)
     S384 = db.Column(db.String(200), nullable=False)
     S512 = db.Column(db.String(200), nullable=False)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    
 
-   
+    @staticmethod
     def HASH_DIGEST():
         
-        with open('rockyou.txt') as f:
+        with open("./rockyou.txt") as f:
             content = f.readlines()
         
         for i in content:
@@ -40,37 +40,44 @@ class HashDB(db.Model):
 
             for k in j:
 
-                result1 = hashlib.sha1(str.encode())
-                result224 = hashlib.sha224(str.encode())
-                result256 = hashlib.sha256(str.encode())
-                result384 = hashlib.sha384(str.encode())
-                result512 = hashlib.sha512(str.encode())
+                result1 = hashlib.sha1(k.encode())
+                result224 = hashlib.sha224(k.encode())
+                result256 = hashlib.sha256(k.encode())
+                result384 = hashlib.sha384(k.encode())
+                result512 = hashlib.sha512(k.encode())
 
-               
+                
 
-                new_hash =  HashDB(S1 = result1, S224 = result224, S256 = result256, S384 = result384, S512 = result512)
+                new_hash =  HashDB(S1 = result1.hexdigest(), S224 = result224.hexdigest(), S256 = result256.hexdigest(), S384 = result384.hexdigest(), S512 = result512.hexdigest())
 
                 db.session.add(new_hash)
                 db.session.commit()
- 
-  
+
+
+def CALL_HASH_INGEST():
+    HashDB.HASH_DIGEST()
+
 @app.route("/", methods=['POST', 'GET'])
 def index():
 
     if request.method == 'POST':
         query_content = request.form['content']
         new_query = query_hist(content=query_content)
+        CALL_HASH_INGEST()
         try:
             db.session.add(new_query)
             db.session.commit()
             return redirect('/')
+            
+            
         except:
             return 'There was an issue with your query'
-
+        
     else:
-        queries = HashDB.query.order_by(HashDB.date_created).all()
+        queries = query_hist.query.order_by(query_hist.date_created).all()
         return render_template('index.html', queries=queries)
 
 
 if __name__ == "__main__":
     app.run(debug=True)
+    
