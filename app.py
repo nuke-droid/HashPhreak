@@ -33,6 +33,7 @@ class HashDB(db.Model):
         
         with open("./rockyou.txt") as f:
             content = f.readlines()
+            print()
         
         for i in content:
 
