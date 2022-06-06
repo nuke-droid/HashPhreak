@@ -16,24 +16,31 @@
 <div class="content" style="background-color: black; color: chartreuse; text-align: center;">
 
     
-    <a href="">Export Data</a>
+    <!--<a href="">Export Data</a>-->
 
     <table style="width:100%">
         <tr>
-            <th>Entry</th>
+            <th>entry</th>
+            <th>PLAINTEXT</th>
           <th>SHA1</th>
+          <th>SHA224</th>
           <th>SHA256</th>
           <th>SHA384</th>
           <th>SHA512</th>
-          <th>Blowfish</th>
+          
 
           
         </tr>
         {% for query in queries %}
         <tr>
-            <td>{{ query.content }}</td>
-            <td>{{ query.content }}</td>
-            <td>{{ query.content }}</td>
+            <td>{{ query.entry }}</td>
+            <td>{{ query.PLAINTEXT }}</td>
+            <td>{{ query.S1 }}</td>
+            <td>{{ query.S224 }}</td>
+            <td>{{ query.S256 }}</td>
+            <td>{{ query.S384 }}</td>
+            <td>{{ query.S512 }}</td>
+           
          
             </td>
             
@@ -43,6 +50,7 @@
     
         <input type="text" name ="content" id="content">
         <input type="submit" value="Query">
+        
 
     </form>
         
