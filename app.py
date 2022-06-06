@@ -83,11 +83,7 @@ class HASH_DB(db.Model):
         else:
             pass
 
- 
-class QUERY_SEARCH():
 
-     pass
-  
 @app.route("/", methods=['POST', 'GET'])
 def index():
 
