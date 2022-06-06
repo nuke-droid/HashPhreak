@@ -1,7 +1,11 @@
+from operator import contains, or_
 from pickle import NONE
+import re
 from string import hexdigits
 from flask import Flask, redirect, url_for, render_template, request
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import or_
+from requests import Session
 from sqlalchemy.orm import query
 from datetime import datetime
 import hashlib
@@ -14,10 +18,9 @@ app.config['SQLALCHEMY_BINDS'] = {'hashes' : 'sqlite:///hashes.db'}
 db = SQLAlchemy(app)
 
 
-class QUERY_HIST(db.Model):
-    id= db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String(200), nullable=False)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+
 
 
 class HASH_DB(db.Model):
@@ -29,6 +32,7 @@ class HASH_DB(db.Model):
     S256 = db.Column(db.String(200), nullable=False)
     S384 = db.Column(db.String(200), nullable=False)
     S512 = db.Column(db.String(200), nullable=False)
+
     #date_created = db.Column(db.DateTime, default=datetime.utcnow)
     word_list = '.\rockyou.txt'
     word_list_hash = 'temp'
@@ -83,23 +87,71 @@ class HASH_DB(db.Model):
         else:
             pass
 
+class SEARCH_QUERY(db.Model):
+    __bind_key__ = 'hashes'
+    id= db.Column(db.Integer, primary_key=True)
+    entry = db.Column(db.String(200), nullable=False)
+    PLAINTEXT = db.Column(db.String(200), nullable=False)
+    S1 = db.Column(db.String(200), nullable=False)
+    S224 = db.Column(db.String(200), nullable=False)
+    S256 = db.Column(db.String(200), nullable=False)
+    S384 = db.Column(db.String(200), nullable=False)
+    S512 = db.Column(db.String(200), nullable=False)
+    #date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
+    def HASH_RESULT():
+        entry1 = request.form['content']
+        #search_v = "{0}".format(entry1)
+        results = HASH_DB.query.filter(or_(HASH_DB.PLAINTEXT.contains(entry1), 
+                                            HASH_DB.S1.contains(entry1),
+                                            HASH_DB.S224.contains(entry1),
+                                            HASH_DB.S256.contains(entry1),
+                                            HASH_DB.S384.contains(entry1),
+                                            HASH_DB.S512.contains(entry1))).all()
+        #results = NONE
+        #results = db.session.query(HASH_DB).all()
+        
+        empty = []
+        if (results != empty):
+           
+        
+            #new_search =  SEARCH_QUERY(entry = entry1, PLAINTEXT = results[1], S1 = results[2], S224 = results[3], S256 = results[4], S384 = results[5], S512 = results[6])
+                
+            #db.session.add(new_search)
+                
+            #d#b.session.commit()
+            
+            print(results)
+        
+            
+            
+
+        else:
+            new_search =  SEARCH_QUERY(entry = entry1, PLAINTEXT = 'NF', S1 = 'NF', S224 = 'NF', S256 = 'NF', S384 = 'NF', S512 = 'NF')
+
+            db.session.add(new_search)
+            db.session.commit()
+            return results
+
+  
 @app.route("/", methods=['POST', 'GET'])
 def index():
 
     if request.method == 'POST':
-        query_content = request.form['content']
-        new_query = QUERY_HIST(content=query_content)
+        #query_content = request.form['content']
+    
+        #new_query = SEARCH_QUERY(entry=query_content)
         try:
-            db.session.add(new_query)
-            db.session.commit()
+            SEARCH_QUERY.HASH_RESULT()
+            #time.sleep(5)
             return redirect('/')
         except:
             return 'There was an issue with your query'
+            #return query_content
 
     else:
-        queries = QUERY_HIST.query.order_by(QUERY_HIST.date_created).all()
-        HASH_DB.HASH_FILE()
+        queries = SEARCH_QUERY.query.order_by(SEARCH_QUERY.id).all()
+        #HASH_DB.HASH_FILE()
         return render_template('index.html', queries=queries)
 
 
